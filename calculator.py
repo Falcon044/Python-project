@@ -1,5 +1,5 @@
-print("Calculator")
-print("Available options: +, -, *, /")
+print("Calculator\n")
+print("Available options: +, -, *, /\n")
 
 first_num = int(input("Enter first number: "))
 action = input("Choose action for calculation: ")
@@ -31,6 +31,8 @@ def execution(action):
         print(str(mult(first_num, second_num)))
     elif action == "/":
         print(str(div(first_num, second_num)))
+    else:
+        print("There is no such action\n")
 
 
 if __name__ == "__main__":
