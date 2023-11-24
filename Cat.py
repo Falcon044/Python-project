@@ -22,10 +22,12 @@ trustCat = 20
 game = True
 
 def update_clock():
-    """Функція відповідає за оновлення ігрової ситуації раз на секунду"""
+    """The function is responsible for updating the game situation once per second"""
     now = time.strftime("%H:%M:%S")
-    root.after(1000, update_clock)
-    root.after(1000, process)
+    label_time.configure(text=now)
+    if game == True:
+        process()
+        root.after(1000, update_clock)
 
 def process():
     global healthCat
@@ -37,22 +39,27 @@ def process():
     if healthCat <= 0 or leisureCat <=0 or disciplineCat <=0 or trustCat <=0:
         answer = mb.askyesno(title="You lost", message="Do you want to play again?")
         if answer == True:
-            healthCat += 20
-            leisureCat += 20
-            disciplineCat += 20
-            trustCat += 20
+            healthCat = 20
+            leisureCat = 20
+            disciplineCat = 20
+            trustCat = 20
         else:
+            mb.showinfo(message="Goodbye!")
             game = False
+            root.quit()
             return game
+        
     elif healthCat >= 100 and leisureCat >= 100 and disciplineCat >= 100 and trustCat >= 100:
-        answer2 = mb.askyesno(title="you win", message="Do you want to play again?")
-        if answer2 == True:
-            healthCat -= 80
-            leisureCat -= 80
-            disciplineCat -= 80
-            trustCat -= 80
+        answer = mb.askyesno(title="you win", message="Do you want to play again?")
+        if answer == True:
+            healthCat = 20
+            leisureCat = 20
+            disciplineCat = 20
+            trustCat = 20
         else:
+            mb.showinfo(message="Goodbye!")
             game = False
+            root.quit()
             return game
     
     healthCat = healthCat - 2
@@ -88,17 +95,18 @@ def leisure():
     global disciplineCat
     global trustCat
 
-    healthCat = healthCat - 2
-    leisureCat = leisureCat + 10
-    disciplineCat = disciplineCat - 2
-    trustCat = trustCat + 1
-    l1.configure(text="health - " + str(healthCat) + "%")
-    l2.configure(text="leisure - " + str(leisureCat) + "%")
-    l3.configure(text="discipline - " + str(disciplineCat) + "%")
-    l4.configure(text="trust - " + str(trustCat) + "%")
-    l5.configure(text="You played with Cat")
     if healthCat <= 10:
-        mb.showerror("Your Cat is hungry")
+        mb.showerror(title="Attention", message="Your Cat is hungry")
+    else:
+        healthCat = healthCat - 2
+        leisureCat = leisureCat + 10
+        disciplineCat = disciplineCat - 2
+        trustCat = trustCat + 1
+        l1.configure(text="health - " + str(healthCat) + "%")
+        l2.configure(text="leisure - " + str(leisureCat) + "%")
+        l3.configure(text="discipline - " + str(disciplineCat) + "%")
+        l4.configure(text="trust - " + str(trustCat) + "%")
+        l5.configure(text="You played with Cat")
 
 def discipline():
     """Changes the discipline value and updates info"""
@@ -107,17 +115,18 @@ def discipline():
     global disciplineCat
     global trustCat
 
-    healthCat = healthCat - 5
-    leisureCat = leisureCat - 3
-    disciplineCat = disciplineCat + 10
-    trustCat = trustCat - 0
-    l1.configure(text="health - " + str(healthCat) + "%")
-    l2.configure(text="leisure - " + str(leisureCat) + "%")
-    l3.configure(text="discipline - " + str(disciplineCat) + "%")
-    l4.configure(text="trust - " + str(trustCat) + "%")
-    l5.configure(text="You trained Cat")
     if healthCat <= 10:
-        mb.showerror("Your Cat is hungry")
+        mb.showerror(title="Attention", message="Your Cat is hungry")
+    else:
+        healthCat = healthCat - 5
+        leisureCat = leisureCat - 3
+        disciplineCat = disciplineCat + 10
+        trustCat = trustCat - 0
+        l1.configure(text="health - " + str(healthCat) + "%")
+        l2.configure(text="leisure - " + str(leisureCat) + "%")
+        l3.configure(text="discipline - " + str(disciplineCat) + "%")
+        l4.configure(text="trust - " + str(trustCat) + "%")
+        l5.configure(text="You trained Cat")
 
 def trust():
     """Changes the trust value and updates info"""
@@ -126,21 +135,24 @@ def trust():
     global disciplineCat
     global trustCat
 
-    healthCat = healthCat - 3
-    leisureCat = leisureCat + 1
-    disciplineCat = disciplineCat - 2
-    trustCat = trustCat + 10
-    l1.configure(text="health - " + str(healthCat) + "%")
-    l2.configure(text="leisure - " + str(leisureCat) + "%")
-    l3.configure(text="discipline - " + str(disciplineCat) + "%")
-    l4.configure(text="trust - " + str(trustCat) + "%")
-    l5.configure(text="You caressed Cat")
     if healthCat <= 10:
-        mb.showerror("Your Cat is hungry")
+        mb.showerror(title="Attention", message="Your Cat is hungry")
+    else:
+        healthCat = healthCat - 3
+        leisureCat = leisureCat + 1
+        disciplineCat = disciplineCat - 2
+        trustCat = trustCat + 10
+        l1.configure(text="health - " + str(healthCat) + "%")
+        l2.configure(text="leisure - " + str(leisureCat) + "%")
+        l3.configure(text="discipline - " + str(disciplineCat) + "%")
+        l4.configure(text="trust - " + str(trustCat) + "%")
+        l5.configure(text="You caressed Cat")
+
 
 while game == True:
 
     label2 = Label(width=27, height=3, text="It is your Cat",font="Arial")
+    label_time = Label(width=20,height=3,text=None)
     b1 = ttk.Button(width=15,text="feed",command=health)
     b2 = ttk.Button(width=15,text="caress",command=trust)
     b3 = ttk.Button(width=15,text="train",command=discipline)
@@ -153,6 +165,7 @@ while game == True:
     l5 = Label(width=20,height=2,text="your cat is alive")
 
     label2.grid(row=0, column=2, columnspan=3, rowspan=2)
+    label_time.grid(row=0,column=0)
     b1.grid(row=2,column=0)
     b2.grid(row=3,column=0)
     b3.grid(row=4,column=0)
@@ -167,5 +180,4 @@ while game == True:
 
     update_clock()
     root.mainloop()
-else:
-    mb.showinfo(text="Goodbye!")
+
