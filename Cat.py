@@ -1,10 +1,13 @@
 from tkinter import *
-import random
 from tkinter import messagebox as mb
 import time
+import random
+import pandas as pd
+
+events = pd.read_csv(r"D:\Python\tkinter_cat\Python-project\Events.csv")
 
 win = Tk()
-win.geometry("450x400")
+win.geometry("450x600")
 win.title("Cat game")
 win.resizable(False, False)
 
@@ -30,8 +33,22 @@ def update_clock():
     now = time.strftime("%H:%M:%S")
     label_time.configure(text=now)
     if game == True:
+        win.after(3000, get_event(events))
         check_stats()
-        win.after(1000, update_clock)
+        win.after(5000, update_clock)
+
+def get_event(df):
+    global healthCat
+    global leisureCat
+    global disciplineCat
+    global trustCat
+    event_number = random.randint(0,9)
+    label_event_info.configure(text=df.at[event_number, "text"])
+    healthCat += df.at[event_number, "health"]
+    leisureCat += df.at[event_number, "leisure"]
+    disciplineCat += df.at[event_number, "discipline"]
+    trustCat += df.at[event_number, "trust"]
+
 
 def check_stats():
     global healthCat
@@ -172,6 +189,7 @@ l2 = Label(width=20,height=2,text="leisure - " + str(leisureCat) + "%")
 l3 = Label(width=20,height=2,text="discipline - " + str(disciplineCat) + "%")
 l4 = Label(width=20,height=2,text="trust - " + str(trustCat) + "%")
 l5 = Label(width=20,height=2,text=f"your {name} is alive")
+label_event_info = Label(width=30,height=15,text=None,)
 
 def get_name():
     """Get the name from Entry element, then delete previous elements and display the main game"""
@@ -199,6 +217,7 @@ def get_name():
     l4.grid(row=9,column=0)
     l5.grid(row=7,column=3)
     logo1.grid(row=2, column=2, columnspan=5, rowspan=5)
+    label_event_info.grid(row=10,column=3)
     update_clock()
 
 # Initialize hidden elemnts of the main game
@@ -216,5 +235,7 @@ label_for_name = Label(width=25, height=3, text="Not more than 12 characters")
 label_for_name.grid(row=0, column=1, columnspan=3,)
 entry_field.grid(row=1, column=0, padx=25, pady=5)
 button_for_name.grid(row=1, column=3, columnspan=3, padx=5, pady=5)
+
+
 
 win.mainloop()
