@@ -21,7 +21,9 @@ healthCat = 20
 leisureCat = 20
 disciplineCat = 20
 trustCat = 20
+
 start_time = None
+click_flag = False
 
 name = "Cat"
 game = True
@@ -29,35 +31,42 @@ game = True
 var = StringVar()
 max_len = 12
 
-# def update_clock():
-#     """The function is responsible for updating the game situation once per second"""
-#     now = time.strftime("%H:%M:%S")
-#     label_time.configure(text=now)
-#     if game == True:
-#         check_stats()
-#         win.after(1000, update_clock)
-
 def get_event(df):
+    """Gets random event from the dataframe and change values accrodingly"""
     global healthCat
     global leisureCat
     global disciplineCat
     global trustCat
     event_number = random.randint(0,9)
     label_event_info.configure(text=df.at[event_number, "text"])
-    healthCat += df.at[event_number, "health"]
-    leisureCat += df.at[event_number, "leisure"]
-    disciplineCat += df.at[event_number, "discipline"]
-    trustCat += df.at[event_number, "trust"]
+    if healthCat + df.at[event_number, "health"] >= 150:
+        healthCat = 150
+    else:
+        healthCat += df.at[event_number, "health"]
+    if leisureCat + df.at[event_number, "leisure"] >= 150:
+        leisureCat = 150
+    else:
+        leisureCat += df.at[event_number, "leisure"]
+    if disciplineCat + df.at[event_number, "discipline"] >= 150:
+        disciplineCat = 150
+    else:
+        disciplineCat += df.at[event_number, "discipline"]
+    if trustCat + df.at[event_number, "trust"] >= 150:
+        trustCat = 150
+    else:   
+        trustCat += df.at[event_number, "trust"]
     l1.configure(text="health - " + str(healthCat) + "%")
     l2.configure(text="leisure - " + str(leisureCat) + "%")
     l3.configure(text="discipline - " + str(disciplineCat) + "%")
     l4.configure(text="trust - " + str(trustCat) + "%")
 
 def update_event():
+    """Recursive call for get_event function"""
     get_event(events)
-    win.after(3000, update_event)
+    win.after(5000, update_event)
 
 def check_stats():
+    """Checks the stats of the pet, control buttons for actions and quit the game if answer is False"""
     global healthCat
     global leisureCat
     global disciplineCat
@@ -78,6 +87,7 @@ def check_stats():
             mb.showinfo(message=f"Goodbye!, you spent {result_time} time with your pet")
             game = False
             win.quit()
+    
     elif healthCat >= 100 and leisureCat >= 100 and disciplineCat >= 100 and trustCat >= 100:
         answer = mb.askyesno(title="you win", message="Do you want to play again?")
         if answer == True:
@@ -92,30 +102,27 @@ def check_stats():
             game = False
             win.quit()
     
-    if healthCat >= 140:
-        b1.configure(state="disabled")
-    elif leisureCat >= 140:
-        b2.configure(state="disabled")
-    elif disciplineCat >= 140:
-        b3.configure(state="disabled")
-    elif trustCat >= 140:
-        b3.configure(state="disabled")
+    if healthCat <= 10:
+        label_info.configure(text=f"Attention!\n{name}\nis hungry")
     else:
-        b1.configure(state="normal")
-        b2.configure(state="normal")
-        b3.configure(state="normal")
-        b4.configure(state="normal")
+        label_info.configure(text=f"{name}\nis sated")
 
-    # healthCat = healthCat - 2
-    # leisureCat = leisureCat - 2
-    # disciplineCat = disciplineCat - 2
-    # trustCat = trustCat - 2
-    # l1.configure(text="health - " + str(healthCat) + "%")
-    # l2.configure(text="leisure - " + str(leisureCat) + "%")
-    # l3.configure(text="discipline - " + str(disciplineCat) + "%")
-    # l4.configure(text="trust - " + str(trustCat) + "%")
+    # if healthCat >= 140:
+    #     b1.configure(state="disabled")
+    # elif leisureCat >= 140:
+    #     b2.configure(state="disabled")
+    # elif disciplineCat >= 140:
+    #     b3.configure(state="disabled")
+    # elif trustCat >= 140:
+    #     b3.configure(state="disabled")
+    # else:
+    #     b1.configure(state="normal")
+    #     b2.configure(state="normal")
+    #     b3.configure(state="normal")
+    #     b4.configure(state="normal")
 
 def update_gui():
+    """Recursive call for check_stats function"""
     check_stats()
     win.after(1000, update_gui)
 
@@ -125,16 +132,22 @@ def health():
     global leisureCat
     global disciplineCat
     global trustCat
+    global click_flag
 
-    healthCat = healthCat + 10
-    leisureCat = leisureCat - 0
-    disciplineCat = disciplineCat - 1
-    trustCat = trustCat + 2
+    if healthCat + 10 >= 150:
+        healthCat = 150
+    else:
+        healthCat += 10
+    leisureCat -= 0
+    disciplineCat -= 1
+    trustCat += 2
     l1.configure(text="health - " + str(healthCat) + "%")
     l2.configure(text="leisure - " + str(leisureCat) + "%")
     l3.configure(text="discipline - " + str(disciplineCat) + "%")
     l4.configure(text="trust - " + str(trustCat) + "%")
     l5.configure(text=f"You fed {name}")
+    click_flag = True
+    click_block(click_flag)
 
 def leisure():
     """Changes the leisure value and updates info"""
@@ -142,19 +155,25 @@ def leisure():
     global leisureCat
     global disciplineCat
     global trustCat
+    global click_flag
 
     if healthCat <= 10:
-        label_info.configure(text=f"Attention!\n{name}\nis hungry")
+        pass
     else:
-        healthCat = healthCat - 2
-        leisureCat = leisureCat + 10
-        disciplineCat = disciplineCat - 2
-        trustCat = trustCat + 1
+        if leisureCat + 10 >= 150:
+            leisureCat = 150
+        else:
+            leisureCat += 10
+        healthCat -= 2
+        disciplineCat -= 2
+        trustCat += 1
         l1.configure(text="health - " + str(healthCat) + "%")
         l2.configure(text="leisure - " + str(leisureCat) + "%")
         l3.configure(text="discipline - " + str(disciplineCat) + "%")
         l4.configure(text="trust - " + str(trustCat) + "%")
         l5.configure(text=f"You played with {name}")
+        click_flag = True
+        click_block(click_flag)
 
 def discipline():
     """Changes the discipline value and updates info"""
@@ -162,19 +181,25 @@ def discipline():
     global leisureCat
     global disciplineCat
     global trustCat
+    global click_flag
 
     if healthCat <= 10:
-        label_info.configure(text=f"Attention!\n{name}\nis hungry")
+        pass
     else:
-        healthCat = healthCat - 5
-        leisureCat = leisureCat - 3
-        disciplineCat = disciplineCat + 10
-        trustCat = trustCat - 0
+        if disciplineCat + 10 >= 150:
+            disciplineCat = 150
+        else:
+            disciplineCat += 10
+        healthCat -= 5
+        leisureCat -= 3
+        trustCat -= 0
         l1.configure(text="health - " + str(healthCat) + "%")
         l2.configure(text="leisure - " + str(leisureCat) + "%")
         l3.configure(text="discipline - " + str(disciplineCat) + "%")
         l4.configure(text="trust - " + str(trustCat) + "%")
         l5.configure(text=f"You trained {name}")
+        click_flag = True
+        click_block(click_flag)
 
 def trust():
     """Changes the trust value and updates info"""
@@ -182,19 +207,43 @@ def trust():
     global leisureCat
     global disciplineCat
     global trustCat
+    global click_flag
 
     if healthCat <= 10:
-        label_info.configure(text=f"Attention!\n{name}\nis hungry")
+        pass
     else:
-        healthCat = healthCat - 3
-        leisureCat = leisureCat + 1
-        disciplineCat = disciplineCat - 2
-        trustCat = trustCat + 10
+        if trustCat + 10 >= 150:
+            trustCat = 150
+        else:
+            trustCat += 10
+        healthCat -= 3
+        leisureCat += 1
+        disciplineCat -= 2
         l1.configure(text="health - " + str(healthCat) + "%")
         l2.configure(text="leisure - " + str(leisureCat) + "%")
         l3.configure(text="discipline - " + str(disciplineCat) + "%")
         l4.configure(text="trust - " + str(trustCat) + "%")
         l5.configure(text=f"You caressed {name}")
+        click_flag = True
+        click_block(click_flag)
+
+def click_block(flag):
+    """Disables buttons for 1 second to prevent spam"""
+    if flag:
+        b1.configure(state="disabled")
+        b2.configure(state="disabled")
+        b3.configure(state="disabled")
+        b4.configure(state="disabled")
+        win.after(1000, click_allow)
+
+def click_allow():
+    """Enables buttons after blocking"""
+    global click_flag
+    b1.configure(state="normal")
+    b2.configure(state="normal")
+    b3.configure(state="normal")
+    b4.configure(state="normal")
+    click_flag = False
 
 def entry_restriction(*args):
     """Create restriction to the amount of characters (for Entry widget)"""
@@ -249,6 +298,7 @@ def get_name():
     label_event_info.grid(row=10,column=3)
     update_gui()
     update_event()
+
 
 # Initialize hidden elemnts of the main game
 
