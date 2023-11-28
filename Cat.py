@@ -27,7 +27,6 @@ start_time = None
 click_flag = False
 
 name = "Cat"
-game = True
 
 var = StringVar()
 max_len = 12
@@ -90,7 +89,6 @@ def check_stats():
             result_time = end_time - start_time
             result_time = time.strftime("%H:%M:%S", time.gmtime(result_time))
             mb.showinfo(message=f"Goodbye!, you spent {result_time} time with your pet")
-            game = False
             win.quit()
     
     elif healthCat >= 100 and leisureCat >= 100 and disciplineCat >= 100 and trustCat >= 100:
@@ -108,7 +106,6 @@ def check_stats():
             result_time = end_time - start_time
             result_time = time.strftime("%H:%M:%S", time.gmtime(result_time))
             mb.showinfo(message=f"Goodbye!, you spent {result_time} time with your pet")
-            game = False
             win.quit()
     
     if healthCat <= 10:
