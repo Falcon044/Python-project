@@ -8,7 +8,7 @@ events = pd.read_csv(r"D:\Python\tkinter_cat\Python-project\Events.csv")
 
 win = Tk()
 win.configure(bg="lightblue")
-win.geometry("450x600")
+win.geometry("450x500")
 win.title("Cat trainer")
 win.resizable(False, False)
 
@@ -37,6 +37,7 @@ def get_event(df):
     global leisureCat
     global disciplineCat
     global trustCat
+
     event_number = random.randint(0,9)
     label_event_info.configure(text=df.at[event_number, "text"])
     if healthCat + df.at[event_number, "health"] >= 150:
@@ -71,7 +72,7 @@ def check_stats():
     global leisureCat
     global disciplineCat
     global trustCat
-    global game
+
     end_time = time.time()
 
     if healthCat <= 0 or leisureCat <= 0 or disciplineCat <= 0 or trustCat <= 0:
@@ -240,7 +241,6 @@ def click_allow():
 def get_name():
     """Get the name from Entry element, then delete previous elements and display the main game"""
     global name 
-    global game
     global start_time
     if entry_field.get() == "":
         name = "Cat"
@@ -268,7 +268,6 @@ def get_name():
     label_delimiter.place(x=0,y=380)
     label_event_info.place(x=0, y=410)
     update_gui()
-    time.sleep(1)
     update_event()
 
 def entry_restriction(*args):
@@ -296,7 +295,7 @@ l5 = Label(bg="lightblue",width=20,height=2,text=f"your {name} is alive")
 label_delimiter = Label(bg="lightblue",anchor="w",width=50,height=1,text="==================================================", font=12)
 label_event_info = Label(bg="lightblue",justify="center",anchor="n",width=40,height=5,text=None,font=("Arial", 14))
 
-# Initialize hidden elemnts of the main game
+# Initialize hidden elements of the main game
 
 hidden_elements = [label_title, label_info,
                    b1, b2, b3, b4, b5, l1,
