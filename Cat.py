@@ -7,7 +7,8 @@ import pandas as pd
 events = pd.read_csv(r"D:\Python\tkinter_cat\Python-project\Events.csv")
 
 win = Tk()
-win.geometry("450x500")
+win.configure(bg="lightblue")
+win.geometry("450x600")
 win.title("Cat trainer")
 win.resizable(False, False)
 
@@ -63,7 +64,7 @@ def get_event(df):
 def update_event():
     """Recursive call for get_event function"""
     get_event(events)
-    win.after(5000, update_event)
+    win.after(4000, update_event)
 
 def check_stats():
     """Checks the stats of the pet, control buttons for actions and quit the game if answer is False"""
@@ -81,6 +82,10 @@ def check_stats():
             leisureCat = 20
             disciplineCat = 20
             trustCat = 20
+            l1.configure(text="health - " + str(healthCat) + "%")
+            l2.configure(text="leisure - " + str(leisureCat) + "%")
+            l3.configure(text="discipline - " + str(disciplineCat) + "%")
+            l4.configure(text="trust - " + str(trustCat) + "%")
         else:
             result_time = end_time - start_time
             result_time = time.strftime("%H:%M:%S", time.gmtime(result_time))
@@ -95,6 +100,10 @@ def check_stats():
             leisureCat = 20
             disciplineCat = 20
             trustCat = 20
+            l1.configure(text="health - " + str(healthCat) + "%")
+            l2.configure(text="leisure - " + str(leisureCat) + "%")
+            l3.configure(text="discipline - " + str(disciplineCat) + "%")
+            l4.configure(text="trust - " + str(trustCat) + "%")
         else:
             result_time = end_time - start_time
             result_time = time.strftime("%H:%M:%S", time.gmtime(result_time))
@@ -106,20 +115,6 @@ def check_stats():
         label_info.configure(text=f"Attention!\n{name}\nis hungry")
     else:
         label_info.configure(text=f"{name}\nis sated")
-
-    # if healthCat >= 140:
-    #     b1.configure(state="disabled")
-    # elif leisureCat >= 140:
-    #     b2.configure(state="disabled")
-    # elif disciplineCat >= 140:
-    #     b3.configure(state="disabled")
-    # elif trustCat >= 140:
-    #     b3.configure(state="disabled")
-    # else:
-    #     b1.configure(state="normal")
-    #     b2.configure(state="normal")
-    #     b3.configure(state="normal")
-    #     b4.configure(state="normal")
 
 def update_gui():
     """Recursive call for check_stats function"""
@@ -245,28 +240,6 @@ def click_allow():
     b4.configure(state="normal")
     click_flag = False
 
-def entry_restriction(*args):
-    """Create restriction to the amount of characters (for Entry widget)"""
-    string = var.get()
-    if len(string) > max_len:
-        var.set(string[:max_len])
-
-var.trace_variable("w", entry_restriction)
-
-label_title = Label(width=27, height=3, text=f"This is your {name}",font="Arial")
-label_info = Label(width=20,height=3,text=None)
-b1 = Button(width=15,text="feed",command=health)
-b2 = Button(width=15,text="play",command=leisure)
-b3 = Button(width=15,text="train",command=discipline)
-b4 = Button(width=15,text="caress",command=trust)
-b5 = Button(width=15,text="Exit",command=quit)
-l1 = Label(width=20,height=2,text="health - " + str(healthCat) + "%")
-l2 = Label(width=20,height=2,text="leisure - " + str(leisureCat) + "%")
-l3 = Label(width=20,height=2,text="discipline - " + str(disciplineCat) + "%")
-l4 = Label(width=20,height=2,text="trust - " + str(trustCat) + "%")
-l5 = Label(width=20,height=2,text=f"your {name} is alive")
-label_event_info = Label(width=30,height=15,text=None,)
-
 def get_name():
     """Get the name from Entry element, then delete previous elements and display the main game"""
     global name 
@@ -282,38 +255,67 @@ def get_name():
     label_for_name.destroy()
     label_title.configure(text=f"This is your {name}",font="Arial")
     l5.configure(text=f"your {name} is alive")
-    label_title.grid(row=0, column=2, columnspan=3, rowspan=2)
-    label_info.grid(row=0,column=0)
-    b1.grid(row=2,column=0)
-    b2.grid(row=3,column=0)
-    b3.grid(row=4,column=0)
-    b4.grid(row=5,column=0)
-    b5.grid(row=9,column=3)
-    l1.grid(row=6,column=0)
-    l2.grid(row=7,column=0)
-    l3.grid(row=8,column=0)
-    l4.grid(row=9,column=0)
-    l5.grid(row=7,column=3)
-    logo1.grid(row=2, column=2, columnspan=5, rowspan=5)
-    label_event_info.grid(row=10,column=3)
+    label_title.place(x=135, y=5)
+    label_info.place(x=-10, y=10)
+    b1.place(x=25, y=80)
+    b2.place(x=25, y=120)
+    b3.place(x=25, y=160)
+    b4.place(x=25, y=200)
+    b5.place(x=240, y=320)
+    l1.place(x=25, y=250)
+    l2.place(x=25, y=280)
+    l3.place(x=25, y=310)
+    l4.place(x=25, y=340)
+    l5.place(x=225, y=270)
+    logo1.place(x=225, y=70)
+    label_delimiter.place(x=0,y=380)
+    label_event_info.place(x=0, y=410)
     update_gui()
+    time.sleep(1)
     update_event()
 
+def entry_restriction(*args):
+    """Create restriction to the amount of characters (for Entry widget)"""
+    string = var.get()
+    if len(string) > max_len:
+        var.set(string[:max_len])
+
+var.trace_variable("w", entry_restriction)
+
+# Initialize main elements of the game
+
+label_title = Label(bg="lightblue",width=27, height=3, text=f"This is your {name}",font=("Arial", 12))
+label_info = Label(bg="lightblue",justify="center",width=20,height=3,text=None,font=("Arial", 12))
+b1 = Button(width=15,text="feed",command=health)
+b2 = Button(width=15,text="play",command=leisure)
+b3 = Button(width=15,text="train",command=discipline)
+b4 = Button(width=15,text="caress",command=trust)
+b5 = Button(width=15,text="Exit",command=quit)
+l1 = Label(bg="lightblue",anchor="w",width=20,height=2,text="health - " + str(healthCat) + "%")
+l2 = Label(bg="lightblue",anchor="w",width=20,height=2,text="leisure - " + str(leisureCat) + "%")
+l3 = Label(bg="lightblue",anchor="w",width=20,height=2,text="discipline - " + str(disciplineCat) + "%")
+l4 = Label(bg="lightblue",anchor="w",width=20,height=2,text="trust - " + str(trustCat) + "%")
+l5 = Label(bg="lightblue",width=20,height=2,text=f"your {name} is alive")
+label_delimiter = Label(bg="lightblue",anchor="w",width=50,height=1,text="==================================================", font=12)
+label_event_info = Label(bg="lightblue",justify="center",anchor="n",width=40,height=5,text=None,font=("Arial", 14))
 
 # Initialize hidden elemnts of the main game
 
 hidden_elements = [label_title, label_info,
                    b1, b2, b3, b4, b5, l1,
-                   l2, l3, l4, l5, logo1]
+                   l2, l3, l4, l5, logo1,
+                   label_delimiter]
 
 for element in hidden_elements:
     element = element.grid_forget()
 
-entry_field = Entry(width=10,font=("Tahoma", 14),textvariable=var)
-button_for_name = Button(width=20, height=1, text="name", command=get_name)
-label_for_name = Label(width=25, height=3, text="Not more than 12 characters")
-label_for_name.grid(row=0, column=1, columnspan=3,)
-entry_field.grid(row=1, column=0, padx=25, pady=5)
-button_for_name.grid(row=1, column=3, columnspan=3, padx=5, pady=5)
+# Initialize initial elements of the game (will be destroyed after button click)
+
+entry_field = Entry(justify="center", font=("Tahoma", 12), textvariable=var)
+button_for_name = Button(bg="orange",text="Name", command=get_name)
+label_for_name = Label(bg="lightblue",text="Name your Cat")
+label_for_name.place(x=80, y=25, width=100, height=30)
+entry_field.place(x=80, y=70, width=100, height=30)
+button_for_name.place(x=250, y=40, width=100, height=60)
 
 win.mainloop()
