@@ -3,8 +3,9 @@ from tkinter import messagebox as mb
 import time
 import random
 import pandas as pd
+import os
 
-events = pd.read_csv(r"D:\Python\tkinter_cat\Python-project\Events.csv")
+events = pd.read_csv(os.path.abspath("Events.csv"))
 
 class Tkinter(Tk):
     
@@ -15,10 +16,10 @@ class Tkinter(Tk):
         self.win.title("Cat trainer")
         self.win.resizable(False, False)
 
-        self.icon = PhotoImage(file=r"D:\Python\tkinter_cat\Python-project\iconCat.png")
+        self.icon = PhotoImage(file=os.path.abspath("iconCat.png"))
         self.win.iconphoto(True, self.icon)
 
-        self.logo = PhotoImage(file=r"D:\Python\tkinter_cat\Python-project\cat.png")
+        self.logo = PhotoImage(file=os.path.abspath("cat.png"))
         self.logo1 = Label(image=self.logo)
 
         self.healthCat = 20
