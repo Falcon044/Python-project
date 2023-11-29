@@ -6,312 +6,285 @@ import pandas as pd
 
 events = pd.read_csv(r"D:\Python\tkinter_cat\Python-project\Events.csv")
 
-win = Tk()
-win.configure(bg="lightblue")
-win.geometry("450x500")
-win.title("Cat trainer")
-win.resizable(False, False)
-
-icon = PhotoImage(file=r"D:\Python\tkinter_cat\Python-project\iconCat.png")
-win.iconphoto(True, icon)
-
-logo = PhotoImage(file=r"D:\Python\tkinter_cat\Python-project\cat.png")
-logo1 = Label(image=logo)
-
-healthCat = 20
-leisureCat = 20
-disciplineCat = 20
-trustCat = 20
-
-start_time = None
-click_flag = False
-
-name = "Cat"
-
-var = StringVar()
-max_len = 12
-
-def get_event(df):
-    """Gets random event from the dataframe and change values accrodingly"""
-    global healthCat
-    global leisureCat
-    global disciplineCat
-    global trustCat
-
-    event_number = random.randint(0,9)
-    label_event_info.configure(text=df.at[event_number, "text"])
-    if healthCat + df.at[event_number, "health"] >= 150:
-        healthCat = 150
-    else:
-        healthCat += df.at[event_number, "health"]
-    if leisureCat + df.at[event_number, "leisure"] >= 150:
-        leisureCat = 150
-    else:
-        leisureCat += df.at[event_number, "leisure"]
-    if disciplineCat + df.at[event_number, "discipline"] >= 150:
-        disciplineCat = 150
-    else:
-        disciplineCat += df.at[event_number, "discipline"]
-    if trustCat + df.at[event_number, "trust"] >= 150:
-        trustCat = 150
-    else:   
-        trustCat += df.at[event_number, "trust"]
-    l1.configure(text="health - " + str(healthCat) + "%")
-    l2.configure(text="leisure - " + str(leisureCat) + "%")
-    l3.configure(text="discipline - " + str(disciplineCat) + "%")
-    l4.configure(text="trust - " + str(trustCat) + "%")
-
-def update_event():
-    """Recursive call for get_event function"""
-    get_event(events)
-    win.after(4000, update_event)
-
-def check_stats():
-    """Checks the stats of the pet, control buttons for actions and quit the game if answer is False"""
-    global healthCat
-    global leisureCat
-    global disciplineCat
-    global trustCat
-
-    end_time = time.time()
-
-    if healthCat <= 0 or leisureCat <= 0 or disciplineCat <= 0 or trustCat <= 0:
-        answer = mb.askyesno(title="You lost", message="Do you want to play again?")
-        if answer == True:
-            healthCat = 20
-            leisureCat = 20
-            disciplineCat = 20
-            trustCat = 20
-            l1.configure(text="health - " + str(healthCat) + "%")
-            l2.configure(text="leisure - " + str(leisureCat) + "%")
-            l3.configure(text="discipline - " + str(disciplineCat) + "%")
-            l4.configure(text="trust - " + str(trustCat) + "%")
-        else:
-            result_time = end_time - start_time
-            result_time = time.strftime("%H:%M:%S", time.gmtime(result_time))
-            mb.showinfo(message=f"Goodbye!, you spent {result_time} time with your pet")
-            win.quit()
+class Tkinter(Tk):
     
-    elif healthCat >= 100 and leisureCat >= 100 and disciplineCat >= 100 and trustCat >= 100:
-        answer = mb.askyesno(title="you win", message="Do you want to play again?")
-        if answer == True:
-            healthCat = 20
-            leisureCat = 20
-            disciplineCat = 20
-            trustCat = 20
-            l1.configure(text="health - " + str(healthCat) + "%")
-            l2.configure(text="leisure - " + str(leisureCat) + "%")
-            l3.configure(text="discipline - " + str(disciplineCat) + "%")
-            l4.configure(text="trust - " + str(trustCat) + "%")
+    def __init__(self):
+        self.win = Tk()
+        self.win.configure(bg="lightblue")
+        self.win.geometry("450x500")
+        self.win.title("Cat trainer")
+        self.win.resizable(False, False)
+
+        self.icon = PhotoImage(file=r"D:\Python\tkinter_cat\Python-project\iconCat.png")
+        self.win.iconphoto(True, self.icon)
+
+        self.logo = PhotoImage(file=r"D:\Python\tkinter_cat\Python-project\cat.png")
+        self.logo1 = Label(image=self.logo)
+
+        self.healthCat = 20
+        self.leisureCat = 20
+        self.disciplineCat = 20
+        self.trustCat = 20
+        self.max_value = 150
+
+        self.click_flag = False
+        self.event_flag = True
+
+        self.start_time = None
+        self.name = "Cat"
+
+        self.var = StringVar()
+        self.max_len = 12
+
+        # Initialize main elements of the game
+
+        self.label_title = Label(bg="lightblue",width=27, height=3, text=f"This is your {self.name}",font=("Arial", 12))
+        self.label_info = Label(bg="lightblue",justify="center",width=20,height=3,text=None,font=("Arial", 12))
+        self.b1 = Button(width=15,text="feed",command=self.health)
+        self.b2 = Button(width=15,text="play",command=self.leisure)
+        self.b3 = Button(width=15,text="train",command=self.discipline)
+        self.b4 = Button(width=15,text="caress",command=self.trust)
+        self.b5 = Button(width=15,text="Exit",command=quit)
+        self.l1 = Label(bg="lightblue",anchor="w",width=20,height=2,text="health - " + str(self.healthCat) + "%")
+        self.l2 = Label(bg="lightblue",anchor="w",width=20,height=2,text="leisure - " + str(self.leisureCat) + "%")
+        self.l3 = Label(bg="lightblue",anchor="w",width=20,height=2,text="discipline - " + str(self.disciplineCat) + "%")
+        self.l4 = Label(bg="lightblue",anchor="w",width=20,height=2,text="trust - " + str(self.trustCat) + "%")
+        self.l5 = Label(bg="lightblue",width=20,height=2,text=f"your {self.name} is alive")
+        self.label_delimiter = Label(bg="lightblue",anchor="w",width=50,height=1,text="==================================================", font=12)
+        self.label_event_info = Label(bg="lightblue",justify="center",anchor="n",width=40,height=5,text=None,font=("Arial", 14))
+
+        # Initialize hidden elements of the main game
+
+        hidden_elements = [self.label_title, self.label_info, self.b1, self.b2,
+                        self.b3, self.b4, self.b5, self.l1, self.l2, self.l3,
+                        self.l4, self.l5, self.logo1, self.label_delimiter]
+
+        for element in hidden_elements:
+            element = element.grid_forget()
+
+        # Initialize initial elements of the game (will be destroyed after button click)
+
+        self.entry_field = Entry(justify="center", font=("Tahoma", 12), textvariable=self.var)
+        self.button_for_name = Button(bg="orange",text="Name", command=self.get_name)
+        self.label_for_name = Label(bg="lightblue",text="Name your Cat")
+        self.label_for_name.place(x=80, y=25, width=100, height=30)
+        self.entry_field.place(x=80, y=70, width=100, height=30)
+        self.button_for_name.place(x=250, y=40, width=100, height=60)
+
+        self.var.trace_add("write", self.entry_restriction)
+
+        self.win.mainloop()
+
+    def entry_restriction(self,*args):
+        """Create restriction to the amount of characters (for Entry widget)"""
+        string = self.var.get()
+        if len(string) > self.max_len:
+            self.var.set(string[:self.max_len])
+
+    def get_event(self,df):
+        """Gets random event from the dataframe and change values accrodingly"""
+        event_number = random.randint(0,9)
+        self.label_event_info.configure(text=df.at[event_number, "text"])
+        if self.healthCat + df.at[event_number, "health"] >= self.max_value:
+            self.healthCat = self.max_value
         else:
-            result_time = end_time - start_time
-            result_time = time.strftime("%H:%M:%S", time.gmtime(result_time))
-            mb.showinfo(message=f"Goodbye!, you spent {result_time} time with your pet")
-            win.quit()
-    
-    if healthCat <= 10:
-        label_info.configure(text=f"Attention!\n{name}\nis hungry")
-    else:
-        label_info.configure(text=f"{name}\nis sated")
-
-def update_gui():
-    """Recursive call for check_stats function"""
-    check_stats()
-    win.after(1000, update_gui)
-
-def health():
-    """Changes the health value and updates info"""
-    global healthCat
-    global leisureCat
-    global disciplineCat
-    global trustCat
-    global click_flag
-
-    if healthCat + 10 >= 150:
-        healthCat = 150
-    else:
-        healthCat += 10
-    leisureCat -= 0
-    disciplineCat -= 1
-    trustCat += 2
-    l1.configure(text="health - " + str(healthCat) + "%")
-    l2.configure(text="leisure - " + str(leisureCat) + "%")
-    l3.configure(text="discipline - " + str(disciplineCat) + "%")
-    l4.configure(text="trust - " + str(trustCat) + "%")
-    l5.configure(text=f"You fed {name}")
-    click_flag = True
-    click_block(click_flag)
-
-def leisure():
-    """Changes the leisure value and updates info"""
-    global healthCat
-    global leisureCat
-    global disciplineCat
-    global trustCat
-    global click_flag
-
-    if healthCat <= 10:
-        pass
-    else:
-        if leisureCat + 10 >= 150:
-            leisureCat = 150
+            self.healthCat += df.at[event_number, "health"]
+        if self.leisureCat + df.at[event_number, "leisure"] >= self.max_value:
+            self.leisureCat = self.max_value
         else:
-            leisureCat += 10
-        healthCat -= 2
-        disciplineCat -= 2
-        trustCat += 1
-        l1.configure(text="health - " + str(healthCat) + "%")
-        l2.configure(text="leisure - " + str(leisureCat) + "%")
-        l3.configure(text="discipline - " + str(disciplineCat) + "%")
-        l4.configure(text="trust - " + str(trustCat) + "%")
-        l5.configure(text=f"You played with {name}")
-        click_flag = True
-        click_block(click_flag)
-
-def discipline():
-    """Changes the discipline value and updates info"""
-    global healthCat
-    global leisureCat
-    global disciplineCat
-    global trustCat
-    global click_flag
-
-    if healthCat <= 10:
-        pass
-    else:
-        if disciplineCat + 10 >= 150:
-            disciplineCat = 150
+            self.leisureCat += df.at[event_number, "leisure"]
+        if self.disciplineCat + df.at[event_number, "discipline"] >= self.max_value:
+            self.disciplineCat = self.max_value
         else:
-            disciplineCat += 10
-        healthCat -= 5
-        leisureCat -= 3
-        trustCat -= 0
-        l1.configure(text="health - " + str(healthCat) + "%")
-        l2.configure(text="leisure - " + str(leisureCat) + "%")
-        l3.configure(text="discipline - " + str(disciplineCat) + "%")
-        l4.configure(text="trust - " + str(trustCat) + "%")
-        l5.configure(text=f"You trained {name}")
-        click_flag = True
-        click_block(click_flag)
+            self.disciplineCat += df.at[event_number, "discipline"]
+        if self.trustCat + df.at[event_number, "trust"] >= self.max_value:
+            self.trustCat = self.max_value
+        else:   
+            self.trustCat += df.at[event_number, "trust"]
+        self.l1.configure(text="health - " + str(self.healthCat) + "%")
+        self.l2.configure(text="leisure - " + str(self.leisureCat) + "%")
+        self.l3.configure(text="discipline - " + str(self.disciplineCat) + "%")
+        self.l4.configure(text="trust - " + str(self.trustCat) + "%")
 
-def trust():
-    """Changes the trust value and updates info"""
-    global healthCat
-    global leisureCat
-    global disciplineCat
-    global trustCat
-    global click_flag
+    def update_event(self):
+        """Recursive call for get_event function"""
+        if self.event_flag:
+            self.get_event(events)
+            self.win.after(4000, self.update_event)
 
-    if healthCat <= 10:
-        pass
-    else:
-        if trustCat + 10 >= 150:
-            trustCat = 150
+    def check_stats(self):
+        """Checks the stats of the pet, control buttons for actions and quit the game if answer is False"""
+        end_time = time.time()
+        if self.healthCat <= 0 or self.leisureCat <= 0 or self.disciplineCat <= 0 or self.trustCat <= 0:
+            self.event_flag = False
+            answer = mb.askyesno(title="You lost", message="Do you want to play again?")
+            if answer == True:
+                self.healthCat = 20
+                self.leisureCat = 20
+                self.disciplineCat = 20
+                self.trustCat = 20
+                self.l1.configure(text="health - " + str(self.healthCat) + "%")
+                self.l2.configure(text="leisure - " + str(self.leisureCat) + "%")
+                self.l3.configure(text="discipline - " + str(self.disciplineCat) + "%")
+                self.l4.configure(text="trust - " + str(self.trustCat) + "%")
+                self.event_flag = True
+            else:
+                result_time = end_time - self.start_time
+                result_time = time.strftime("%H:%M:%S", time.gmtime(result_time))
+                mb.showinfo(message=f"Goodbye!, you spent {result_time} time with your pet")
+                self.win.quit()
+        elif self.healthCat >= 100 and self.leisureCat >= 100 and self.disciplineCat >= 100 and self.trustCat >= 100:
+            self.event_flag = False
+            answer = mb.askyesno(title="you win", message="Do you want to play again?")
+            if answer == True:
+                self.healthCat = 20
+                self.leisureCat = 20
+                self.disciplineCat = 20
+                self.trustCat = 20
+                self.l1.configure(text="health - " + str(self.healthCat) + "%")
+                self.l2.configure(text="leisure - " + str(self.leisureCat) + "%")
+                self.l3.configure(text="discipline - " + str(self.disciplineCat) + "%")
+                self.l4.configure(text="trust - " + str(self.trustCat) + "%")
+                self.event_flag = True
+            else:
+                result_time = end_time - self.start_time
+                result_time = time.strftime("%H:%M:%S", time.gmtime(result_time))
+                mb.showinfo(message=f"Goodbye!, you spent {result_time} time with your pet")
+                self.win.quit()
+        
+        if self.healthCat <= 10:
+            self.label_info.configure(text=f"Attention!\n{self.name}\nis hungry")
         else:
-            trustCat += 10
-        healthCat -= 3
-        leisureCat += 1
-        disciplineCat -= 2
-        l1.configure(text="health - " + str(healthCat) + "%")
-        l2.configure(text="leisure - " + str(leisureCat) + "%")
-        l3.configure(text="discipline - " + str(disciplineCat) + "%")
-        l4.configure(text="trust - " + str(trustCat) + "%")
-        l5.configure(text=f"You caressed {name}")
-        click_flag = True
-        click_block(click_flag)
+            self.label_info.configure(text=f"{self.name}\nis sated")
 
-def click_block(flag):
-    """Disables buttons for 1 second to prevent spam"""
-    if flag:
-        b1.configure(state="disabled")
-        b2.configure(state="disabled")
-        b3.configure(state="disabled")
-        b4.configure(state="disabled")
-        win.after(1000, click_allow)
+    def update_gui(self):
+        """Recursive call for check_stats function"""
+        self.check_stats()
+        self.win.after(1000, self.update_gui)
 
-def click_allow():
-    """Enables buttons after blocking"""
-    global click_flag
-    b1.configure(state="normal")
-    b2.configure(state="normal")
-    b3.configure(state="normal")
-    b4.configure(state="normal")
-    click_flag = False
+    def health(self):
+        """Changes the health value and updates info"""
+        if self.healthCat + 10 >= self.max_value:
+            self.healthCat = self.max_value
+        else:
+            self.healthCat += 10
+        self.leisureCat -= 0
+        self.disciplineCat -= 1
+        self.trustCat += 2
+        self.l1.configure(text="health - " + str(self.healthCat) + "%")
+        self.l2.configure(text="leisure - " + str(self.leisureCat) + "%")
+        self.l3.configure(text="discipline - " + str(self.disciplineCat) + "%")
+        self.l4.configure(text="trust - " + str(self.trustCat) + "%")
+        self.l5.configure(text=f"You fed {self.name}")
+        self.click_flag = True
+        self.click_block()
 
-def get_name():
-    """Get the name from Entry element, then delete previous elements and display the main game"""
-    global name 
-    global start_time
-    if entry_field.get() == "":
-        name = "Cat"
-    else:
-        name = entry_field.get()
-    start_time = time.time()
-    entry_field.destroy()
-    button_for_name.destroy()
-    label_for_name.destroy()
-    label_title.configure(text=f"This is your {name}",font="Arial")
-    l5.configure(text=f"your {name} is alive")
-    label_title.place(x=135, y=5)
-    label_info.place(x=-10, y=10)
-    b1.place(x=25, y=80)
-    b2.place(x=25, y=120)
-    b3.place(x=25, y=160)
-    b4.place(x=25, y=200)
-    b5.place(x=240, y=320)
-    l1.place(x=25, y=250)
-    l2.place(x=25, y=280)
-    l3.place(x=25, y=310)
-    l4.place(x=25, y=340)
-    l5.place(x=225, y=270)
-    logo1.place(x=225, y=70)
-    label_delimiter.place(x=0,y=380)
-    label_event_info.place(x=0, y=410)
-    update_gui()
-    update_event()
+    def leisure(self):
+        """Changes the leisure value and updates info"""
+        if self.healthCat <= 10:
+            pass
+        else:
+            if self.leisureCat + 10 >= self.max_value:
+                self.leisureCat = self.max_value
+            else:
+                self.leisureCat += 10
+            self.healthCat -= 2
+            self.disciplineCat -= 2
+            self.trustCat += 1
+            self.l1.configure(text="health - " + str(self.healthCat) + "%")
+            self.l2.configure(text="leisure - " + str(self.leisureCat) + "%")
+            self.l3.configure(text="discipline - " + str(self.disciplineCat) + "%")
+            self.l4.configure(text="trust - " + str(self.trustCat) + "%")
+            self.l5.configure(text=f"You played with {self.name}")
+            self.click_flag = True
+            self.click_block()
 
-def entry_restriction(*args):
-    """Create restriction to the amount of characters (for Entry widget)"""
-    string = var.get()
-    if len(string) > max_len:
-        var.set(string[:max_len])
+    def discipline(self):
+        """Changes the discipline value and updates info"""
+        if self.healthCat <= 10:
+            pass
+        else:
+            if self.disciplineCat + 10 >= self.max_value:
+                self.disciplineCat = self.max_value
+            else:
+                self.disciplineCat += 10
+            self.healthCat -= 5
+            self.leisureCat -= 3
+            self.trustCat -= 0
+            self.l1.configure(text="health - " + str(self.healthCat) + "%")
+            self.l2.configure(text="leisure - " + str(self.leisureCat) + "%")
+            self.l3.configure(text="discipline - " + str(self.disciplineCat) + "%")
+            self.l4.configure(text="trust - " + str(self.trustCat) + "%")
+            self.l5.configure(text=f"You trained {self.name}")
+            self.click_flag = True
+            self.click_block()
 
-var.trace_variable("w", entry_restriction)
+    def trust(self):
+        """Changes the trust value and updates info"""
+        if self.healthCat <= 10:
+            pass
+        else:
+            if self.trustCat + 10 >= self.max_value:
+                self.trustCat = self.max_value
+            else:
+                self.trustCat += 10
+            self.healthCat -= 3
+            self.leisureCat += 1
+            self.disciplineCat -= 2
+            self.l1.configure(text="health - " + str(self.healthCat) + "%")
+            self.l2.configure(text="leisure - " + str(self.leisureCat) + "%")
+            self.l3.configure(text="discipline - " + str(self.disciplineCat) + "%")
+            self.l4.configure(text="trust - " + str(self.trustCat) + "%")
+            self.l5.configure(text=f"You caressed {self.name}")
+            self.click_flag = True
+            self.click_block()
 
-# Initialize main elements of the game
+    def click_block(self):
+        """Disables buttons for 1 second to prevent spam"""
+        if self.click_flag:
+            self.b1.configure(state="disabled")
+            self.b2.configure(state="disabled")
+            self.b3.configure(state="disabled")
+            self.b4.configure(state="disabled")
+            self.win.after(1000, self.click_allow)
 
-label_title = Label(bg="lightblue",width=27, height=3, text=f"This is your {name}",font=("Arial", 12))
-label_info = Label(bg="lightblue",justify="center",width=20,height=3,text=None,font=("Arial", 12))
-b1 = Button(width=15,text="feed",command=health)
-b2 = Button(width=15,text="play",command=leisure)
-b3 = Button(width=15,text="train",command=discipline)
-b4 = Button(width=15,text="caress",command=trust)
-b5 = Button(width=15,text="Exit",command=quit)
-l1 = Label(bg="lightblue",anchor="w",width=20,height=2,text="health - " + str(healthCat) + "%")
-l2 = Label(bg="lightblue",anchor="w",width=20,height=2,text="leisure - " + str(leisureCat) + "%")
-l3 = Label(bg="lightblue",anchor="w",width=20,height=2,text="discipline - " + str(disciplineCat) + "%")
-l4 = Label(bg="lightblue",anchor="w",width=20,height=2,text="trust - " + str(trustCat) + "%")
-l5 = Label(bg="lightblue",width=20,height=2,text=f"your {name} is alive")
-label_delimiter = Label(bg="lightblue",anchor="w",width=50,height=1,text="==================================================", font=12)
-label_event_info = Label(bg="lightblue",justify="center",anchor="n",width=40,height=5,text=None,font=("Arial", 14))
+    def click_allow(self):
+        """Enables buttons after blocking"""
+        self.b1.configure(state="normal")
+        self.b2.configure(state="normal")
+        self.b3.configure(state="normal")
+        self.b4.configure(state="normal")
+        self.click_flag = False
 
-# Initialize hidden elements of the main game
+    def get_name(self):
+        """Get the name from Entry element, then delete previous elements and display the main game"""
+        if self.entry_field.get() == "":
+            self.name = "Cat"
+        else:
+            self.name = self.entry_field.get()
+        self.start_time = time.time()
+        self.entry_field.destroy()
+        self.button_for_name.destroy()
+        self.label_for_name.destroy()
+        self.label_title.configure(text=f"This is your {self.name}",font="Arial")
+        self.l5.configure(text=f"your {self.name} is alive")
+        self.label_title.place(x=135, y=5)
+        self.label_info.place(x=-10, y=10)
+        self.b1.place(x=25, y=80)
+        self.b2.place(x=25, y=120)
+        self.b3.place(x=25, y=160)
+        self.b4.place(x=25, y=200)
+        self.b5.place(x=240, y=320)
+        self.l1.place(x=25, y=250)
+        self.l2.place(x=25, y=280)
+        self.l3.place(x=25, y=310)
+        self.l4.place(x=25, y=340)
+        self.l5.place(x=225, y=270)
+        self.logo1.place(x=225, y=70)
+        self.label_delimiter.place(x=0,y=380)
+        self.label_event_info.place(x=0, y=410)
+        self.update_gui()
+        self.update_event()
 
-hidden_elements = [label_title, label_info,
-                   b1, b2, b3, b4, b5, l1,
-                   l2, l3, l4, l5, logo1,
-                   label_delimiter]
-
-for element in hidden_elements:
-    element = element.grid_forget()
-
-# Initialize initial elements of the game (will be destroyed after button click)
-
-entry_field = Entry(justify="center", font=("Tahoma", 12), textvariable=var)
-button_for_name = Button(bg="orange",text="Name", command=get_name)
-label_for_name = Label(bg="lightblue",text="Name your Cat")
-label_for_name.place(x=80, y=25, width=100, height=30)
-entry_field.place(x=80, y=70, width=100, height=30)
-button_for_name.place(x=250, y=40, width=100, height=60)
-
-win.mainloop()
+if __name__ == "__main__":
+    game = Tkinter()
